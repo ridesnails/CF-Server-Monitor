@@ -7,11 +7,10 @@ compatibility_flags = ["nodejs_compat"]
 keep_vars = true
 
 # 定时任务配置（UTC）
-# - 每分钟：执行离线节点、资源告警
-# - 每小时：合并执行其他定时任务（表轮换、旧表清理、按配置时区/小时触发服务器到期检测）
+# - 每分钟：执行离线节点、资源告警；整点（minute===0）时合并执行表轮换/旧表清理/到期检测
 # - 注意同步修改deploy和index.js scheduled函数里面的值
 [triggers]
-crons = ["*/1 * * * *", "0 * * * *"]
+crons = ["*/1 * * * *"]
 
 [assets]
 directory = "./dist"
@@ -20,6 +19,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "server-monitor-db"
+database_id = "ca5a91f7-36c7-482e-b8e4-61075d545fcc"
 
 # Durable Objects：实时指标广播中心
 # 注意：首次部署前需要执行 `wrangler durable-object create MetricsBroadcaster --class MetricsBroadcaster`

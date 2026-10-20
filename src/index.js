@@ -485,14 +485,17 @@ export default {
         await checkResourceAlerts(env, { minute });
         debug('[Cron] 资源负载告警检测完成');
       }
-    } else if (cron === '0 * * * *') {
-      if (day === 0 && hour === 0) {
-        debug('[Cron] 开始执行每周数据清理任务（表轮换）');
-        await weeklyCleanup(env.DB);
-        debug('[Cron] 每周数据清理任务完成');
+      // 原 `0 * * * *` 触发器的整点任务已合并到每分钟触发器中：
+      // Cloudflare Free 每账号只有 5 个 cron，为给 uptimeflare_worker 腾出名额而合并。
+      if (minute === 0) {
+        if (day === 0 && hour === 0) {
+          debug('[Cron] 开始执行每周数据清理任务（表轮换）');
+          await weeklyCleanup(env.DB);
+          debug('[Cron] 每周数据清理任务完成');
+        }
+        debug('[Cron] 检查是否到达服务器到期检测时间');
+        await checkExpiringServers(env.DB, { scheduled: true, now: now.getTime() });
       }
-      debug('[Cron] 检查是否到达服务器到期检测时间');
-      await checkExpiringServers(env.DB, { scheduled: true, now: now.getTime() });
     }else if(env.DEBUG == 1){
       if (cron === '0 0 * * 0') {
         debug('[Cron DEBUG] 开始执行每周数据清理任务（表轮换）');
