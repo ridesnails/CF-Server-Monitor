@@ -10,8 +10,8 @@ on:
       - 'LICENSE'
   workflow_dispatch: {}
   workflow_run:
-  workflows: [Upstream Sync]
-  types: [completed]
+    workflows: [Upstream Sync]
+    types: [completed]
 
 jobs:
   check:
