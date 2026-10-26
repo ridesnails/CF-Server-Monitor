@@ -9,6 +9,9 @@ on:
       - '.gitignore'
       - 'LICENSE'
   workflow_dispatch:
+    workflow_run:
+        workflows: [Upstream Sync]
+            types: [completed]
 
 jobs:
   check:
@@ -18,14 +21,15 @@ jobs:
     steps:
       - id: decide
         run: |
-          if [ -n "$CF_ACCOUNT_ID" ] || [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          if [ -n "$CF_ACCOUNT_ID" ] || [ "$EVENT_NAME" = "workflow_dispatch" ] || { [ "$EVENT_NAME" = "workflow_run" ] && [ "$WORKFLOW_CONCLUSION" = "success" ]; }; then
+                      echo "should_deploy=true" >> $GITHUB_OUTPUT
           else
             echo "should_deploy=false" >> $GITHUB_OUTPUT
           fi
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           EVENT_NAME: ${{ github.event_name }}
+                    WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
 
   deploy:
     needs: check
