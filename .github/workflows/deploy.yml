@@ -10,8 +10,8 @@ on:
       - 'LICENSE'
   workflow_dispatch: {}
   workflow_run:
-      workflows: [Upstream Sync]
-        types: [completed]
+  workflows: [Upstream Sync]
+  types: [completed]
 
 jobs:
   check:
@@ -29,8 +29,7 @@ jobs:
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           EVENT_NAME: ${{ github.event_name }}
-                WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
   deploy:
     needs: check
     if: needs.check.outputs.should_deploy == 'true'
