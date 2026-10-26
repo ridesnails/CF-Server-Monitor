@@ -9,9 +9,9 @@ on:
       - '.gitignore'
       - 'LICENSE'
   workflow_dispatch:
-    workflow_run:
-        workflows: [Upstream Sync]
-            types: [completed]
+  workflow_run:
+      workflows: [Upstream Sync]
+        types: [completed]
 
 jobs:
   check:
